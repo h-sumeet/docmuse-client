@@ -11,7 +11,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
 
     steps:
       - uses: actions/checkout@v4
@@ -26,15 +26,12 @@ jobs:
           npm install
           npm run build --if-present
           npm run test --if-present
-
-      - name: Zip artifact for deployment
-        run: zip release.zip ./* -r
-
+      
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
           name: node-app
-          path: release.zip
+          path: .
 
   deploy:
     runs-on: ubuntu-latest
@@ -50,20 +47,17 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: node-app
-
-      - name: Unzip artifact for deployment
-        run: unzip release.zip
       
       - name: Login to Azure
         uses: azure/login@v2
         with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_D67D7DC3598F46B7B07E1C00EF21C8DC }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_FAC17B48FF374F76AF1CDE42BFFE2D1E }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_D48E52B03AE24636AC1A2790749BF1FD }}
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_2129C697D8914893A7ECABE8BD52772E }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_DF1AA3BE988941BC8C6021CE158B4993 }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_8A3FAA90A9B249598EB71DB5DD882AF8 }}
 
       - name: 'Deploy to Azure Web App'
-        id: deploy-to-webapp
         uses: azure/webapps-deploy@v3
+        id: deploy-to-webapp
         with:
           app-name: 'docmuse'
           slot-name: 'Production'
